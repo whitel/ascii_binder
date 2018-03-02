@@ -3,17 +3,18 @@ require 'stringio'
 
 module AsciiBinder
   module Helpers
-    BUILD_FILENAME      = '_build_cfg.yml'
-    TOPIC_MAP_FILENAME  = '_topic_map.yml'
-    DISTRO_MAP_FILENAME = '_distro_map.yml'
-    PREVIEW_DIRNAME     = '_preview'
-    PACKAGE_DIRNAME     = '_package'
-    STYLESHEET_DIRNAME  = '_stylesheets'
-    JAVASCRIPT_DIRNAME  = '_javascripts'
-    IMAGE_DIRNAME       = '_images'
-    BLANK_STRING_RE     = Regexp.new('^\s*$')
-    ID_STRING_RE        = Regexp.new('^[A-Za-z0-9\-\_]+$')
-    URL_STRING_RE       = Regexp.new('^https?:\/\/[\S]+$')
+    BUILD_FILENAME           = '_build_cfg.yml'
+    TOPIC_MAP_FILENAME       = '_topic_map.yml'
+    DISTRO_MAP_FILENAME      = '_distro_map.yml'
+    CONTENT_SET_MAP_FILENAME = '_content_set_map.yml'
+    PREVIEW_DIRNAME          = '_preview'
+    PACKAGE_DIRNAME          = '_package'
+    STYLESHEET_DIRNAME       = '_stylesheets'
+    JAVASCRIPT_DIRNAME       = '_javascripts'
+    IMAGE_DIRNAME            = '_images'
+    BLANK_STRING_RE          = Regexp.new('^\s*$')
+    ID_STRING_RE             = Regexp.new('^[A-Za-z0-9\-\_]+$')
+    URL_STRING_RE            = Regexp.new('^https?:\/\/[\S]+$')
 
     def valid_id?(check_id)
       return false unless check_id.is_a?(String)
@@ -145,6 +146,16 @@ module AsciiBinder
           Dir.mkdir(lpackage_dir)
         end
         lpackage_dir
+      end
+    end
+
+    def prepare_dir(target)
+      @prepare_dir ||= begin
+        lprepare_dir = File.join(docs_root_dir,target)
+        if not File.exists?(lprepare_dir)
+          Dir.mkdir(lprepare_dir)
+        end
+        lprepare_dir
       end
     end
 

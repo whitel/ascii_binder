@@ -4,6 +4,13 @@ require 'ascii_binder'
 include AsciiBinder::Engine
 include AsciiBinder::Helpers
 
+desc "Prepare the content"
+task :prepare, :prepare_context do |task,args|
+  # Figure out where the content is coming form
+  # collect it somewhere locally
+  # this is a rake task.. we may not need this yet
+end
+
 desc "Build the documentation"
 task :build, :build_distro do |task,args|
   # Figure out which distros we are building.

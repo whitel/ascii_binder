@@ -1,5 +1,8 @@
 require 'ascii_binder/distro_branch'
 require 'ascii_binder/distro_map'
+require 'ascii_binder/content_set'
+require 'ascii_binder/content_set_map'
+require 'ascii_binder/content_target_map'
 require 'ascii_binder/helpers'
 require 'ascii_binder/site_map'
 require 'ascii_binder/template_renderer'
@@ -19,7 +22,7 @@ include AsciiBinder::Helpers
 
 module AsciiBinder
   module Engine
-
+    
     def build_date
       Time.now.utc
     end
@@ -165,6 +168,19 @@ module AsciiBinder
       end
     end
 
+    def content_target_map
+      @content_target_map ||= begin
+        content_target_map_file = File.join(docs_root_dir, CONTENT_SET_MAP_FILENAME)
+        content_target_map = AsciiBinder::ContentTargetMap.new(content_target_map_file)
+        puts "content_target_map: #{content_target_map.content_target_keys}"
+        unless content_target_map.is_valid?
+          errors = content_target_map.errors
+          Trollop::die "The content target map file at '#{content_target_map_file}' contains the following errors:\n- " + errors.join("\n- ") + "\n"
+        end
+        content_target_map
+      end
+    end
+
     def site_map
       @site_map ||= AsciiBinder::SiteMap.new(distro_map)
     end
@@ -246,6 +262,21 @@ module AsciiBinder
         'sectanchors',
         'data-uri',
       ].concat(more_attrs)
+    end
+
+    def prepare_content()
+      
+      content_target_map.content_target_keys.each do |target_key|
+        content_target_map.get_content_target(target_key).content_sets.each do |content_set|
+          content_set.content.each do | content_item |
+            File.join(prepare_dir(target_key),content_item.id)
+          end
+          puts "Got here"
+          puts "#{content_set.id}"
+          p content_set
+
+        end 
+      end
     end
 
     def generate_docs(branch_group,build_distro,single_page)

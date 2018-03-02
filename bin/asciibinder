@@ -22,6 +22,15 @@ def call_generate(branch_group, distro, page)
   end
 end
 
+def call_prepare()
+  begin
+    prepare_content
+  rescue => e
+    message = "#{e.class.name}: #{e.message} at\n    #{e.backtrace.join("\n    ")}"
+    Trollop::die "Could not prepare docs:\n#{message}"
+  end
+end
+
 def repo_check(docs_basedir)
   missing_files = false
   # These must all be present
@@ -46,7 +55,7 @@ def in_git_repo(dir)
   in_git_repo(File.expand_path('..',dir))
 end
 
-SUB_COMMANDS = %w{help version build watch package clean create clone}
+SUB_COMMANDS = %w{help version prepare build watch package clean create clone}
 Trollop::options do
   version AsciiBinder::VERSION
   banner <<-EOF
@@ -56,6 +65,9 @@ Usage:
 Commands:
   build (default action)
     Builds the HTML docs within the indicated docs base directory
+  prepare
+    Prepares the content in one location when the content is not 
+    all provided by one repository
   create
     Generates a new AsciiBinder repo at the indicated dir
   clone
@@ -90,6 +102,22 @@ elsif !SUB_COMMANDS.include?(cmd)
 end
 
 cmd_opts = case cmd
+  when "prepare"
+    Trollop::options do
+      banner <<-EOF
+Usage:
+  #$0 prepare <options> <docs_basedir>
+
+Description:
+some help once we figure out how this works. Retaining the options from "build" for now.
+Options:
+EOF
+      opt :all_branches, "Instead of building only the current working branch, build all branches", :default => false
+      opt :distro, "Instead of building all distros, build branches only for the specified distro.", :default => ''
+      opt :page, "Build only the specified page for all distros and only the current working branch.", :default => ''
+      opt :log_level, "Set the logging output level for this operation.", :default => 'warn'
+      conflicts :distro, :page
+    end
   when "build"
     Trollop::options do
       banner <<-EOF
@@ -256,7 +284,7 @@ else
     Trollop::die "The specified docs directory '#{docs_basedir}' is not readable."
   elsif !docs_basedir.writable?
     Trollop::die "The specified docs directory '#{docs_basedir}' cannot be written to."
-  else
+  elseif cmd != 'prepare'
     repo_check(docs_basedir)
   end
 end
@@ -338,6 +366,9 @@ when "clean"
 when "create"
   create_new_repo
   puts "Created new repo in #{docs_basedir}."
+when "prepare"
+  puts "do some stuff"
+  call_prepare
 end
 
 exit

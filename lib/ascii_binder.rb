@@ -1,4 +1,5 @@
 require "ascii_binder/distro_map"
+require "ascii_binder/content_set_map"
 require "ascii_binder/engine"
 require "ascii_binder/helpers"
 require "ascii_binder/template_renderer"
