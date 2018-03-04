@@ -271,7 +271,7 @@ module AsciiBinder
       base_staging = get_target_dir(target,STAGING_DIRNAME)
       p base_staging
       p content_item
-      repo_dir = File.join(base_staging,"#{content_item.content_set.id},#{content_item.dir}")
+      repo_dir = File.join(base_staging,content_item.content_set.id,content_item.dir)
       p repo_dir
       puts
       if File.exists?(repo_dir)
