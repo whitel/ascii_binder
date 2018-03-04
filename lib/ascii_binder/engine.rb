@@ -267,8 +267,21 @@ module AsciiBinder
       ].concat(more_attrs)
     end
 
-    def pull_content(target, content_item)
-      get_target_dir(target_key,STAGING_DIRNAME)
+    def pull_content(target,content_item)
+      base_staging = get_target_dir(target,STAGING_DIRNAME)
+      p base_staging
+      p content_item
+      repo_dir = File.join(base_staging,"#{content_item.content_set.id}-#{content_item.dir}")
+      p repo_dir
+      puts
+      if File.exists?(repo_dir)
+        puts "git -C #{repo_dir} pull"
+        system("git -C #{repo_dir} pull")
+      else
+        puts "git clone #{content_item.repo} #{repo_dir}"
+        system("git clone #{content_item.repo} #{repo_dir}")
+      end
+      puts
     end
 
     def move_content(target, content_item)

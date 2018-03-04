@@ -4,7 +4,7 @@ include AsciiBinder::Helpers
 
 module AsciiBinder
   class ContentItem
-    attr_reader :id, :repo, :branch, :content_set, :content_subsets
+    attr_reader :id, :repo, :branch, :dir, :content_set, :content_subsets
 
     def initialize(content_set_map_filepath,content_item_name,content_item_config,content_set)
       puts "#{content_item_name} : #{content_item_config}"
