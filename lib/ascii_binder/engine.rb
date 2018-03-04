@@ -104,17 +104,20 @@ module AsciiBinder
       return topic_map
     end
 
-    def create_new_repo
+    def create_new_repo(*args)
+      args.size == 0 ? repo_dir = docs_root_dir : repo_dir = args[0] 
+      puts repo_dir
       gem_template_dir = File.join(gem_root_dir,"templates")
 
       # Create the new repo dir
-      FileUtils.mkdir_p(docs_root_dir)
+      FileUtils.mkdir_p(*args)
 
       # Copy the basic repo content into the new repo dir
       Find.find(gem_template_dir).each do |path|
         next if path == gem_template_dir
         src_path = Pathname.new(path)
-        tgt_path = src_path.sub(gem_template_dir,docs_root_dir)
+        tgt_path = src_path.sub(gem_template_dir,repo_dir)
+        p src_path,tgt_path
         if src_path.directory?
           FileUtils.mkdir_p(tgt_path.to_s)
         else
@@ -123,7 +126,7 @@ module AsciiBinder
       end
 
       # Initialize the git repo
-      Git.init(docs_root_dir)
+      Git.init(repo_dir)
     end
 
     def find_topic_files
@@ -264,17 +267,25 @@ module AsciiBinder
       ].concat(more_attrs)
     end
 
+    def pull_content(target, content_item)
+      get_target_dir(target_key,STAGING_DIRNAME)
+    end
+
+    def move_content(target, content_item)
+      get_target_dir(target_key,CONTENT_DIRNAME)
+    end
+
     def prepare_content()
-      
+      puts "it starts"
       content_target_map.content_target_keys.each do |target_key|
+        unless target_key.nil?
+          puts "target_key was empty"
+        end 
+        create_new_repo(get_target_dir(target_key,CONTENT_DIRNAME))
         content_target_map.get_content_target(target_key).content_sets.each do |content_set|
           content_set.content.each do | content_item |
-            File.join(prepare_dir(target_key),content_item.id)
+            pull_content(target_key,content_item)
           end
-          puts "Got here"
-          puts "#{content_set.id}"
-          p content_set
-
         end 
       end
     end

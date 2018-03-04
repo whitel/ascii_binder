@@ -11,6 +11,7 @@ module AsciiBinder
       @id              = content_item_name
       @repo            = content_item_config['repo']
       @branch          = content_item_config['branch']
+      @dir             = content_item_config['dir']
       @content_set     = content_set
       @content_subsets = {}
 

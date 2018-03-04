@@ -9,6 +9,8 @@ module AsciiBinder
     CONTENT_SET_MAP_FILENAME = '_content_set_map.yml'
     PREVIEW_DIRNAME          = '_preview'
     PACKAGE_DIRNAME          = '_package'
+    STAGING_DIRNAME          = '_staging'
+    CONTENT_DIRNAME          = '_content'
     STYLESHEET_DIRNAME       = '_stylesheets'
     JAVASCRIPT_DIRNAME       = '_javascripts'
     IMAGE_DIRNAME            = '_images'
@@ -149,15 +151,36 @@ module AsciiBinder
       end
     end
 
-    def prepare_dir(target)
-      @prepare_dir ||= begin
-        lprepare_dir = File.join(docs_root_dir,target)
-        if not File.exists?(lprepare_dir)
-          Dir.mkdir(lprepare_dir)
-        end
-        lprepare_dir
+    def prepare_target_dir(target)
+      lprepare_dir = File.join(docs_root_dir,target)
+      if not File.exists?(lprepare_dir)
+        Dir.mkdir(lprepare_dir)
       end
+      return lprepare_dir
     end
+
+    def get_target_dir(target,subdir)
+      lcontent_dir = File.join(prepare_target_dir(target),subdir)
+      if not File.exists?(lcontent_dir)
+        Dir.mkdir(lcontent_dir)
+      end
+      return lcontent_dir
+    end
+    # def prepare_staging_dir(target)
+    #   lcontent_dir = File.join(prepare_target_dir(target),STAGING_DIRNAME)
+    #   if not File.exists?(lcontent_dir)
+    #     Dir.mkdir(lcontent_dir)
+    #   end
+    #   lcontent_dir
+    # end
+
+    # def prepare_content_dir(target)
+    #   lcontent_dir = File.join(prepare_target_dir(target),CONTENT_DIRNAME)
+    #   if not File.exists?(lcontent_dir)
+    #     Dir.mkdir(lcontent_dir)
+    #   end
+    #   lcontent_dir
+    # end
 
     def stylesheet_dir
       @stylesheet_dir ||= File.join(docs_root_dir,STYLESHEET_DIRNAME)
