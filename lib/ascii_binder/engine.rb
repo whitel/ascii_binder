@@ -295,9 +295,16 @@ module AsciiBinder
           puts "target_key was empty"
         end 
         create_new_repo(get_target_dir(target_key,CONTENT_DIRNAME))
+        puts "git -C #{get_target_dir(target_key,CONTENT_DIRNAME)} add *"
+        system("git -C #{get_target_dir(target_key,CONTENT_DIRNAME)} add *")
+
+        puts "git -C #{get_target_dir(target_key,CONTENT_DIRNAME)} commit -m 'initial commit'"
+        system("git -C #{get_target_dir(target_key,CONTENT_DIRNAME)} commit -m 'initial commit'")
+
         content_target_map.get_content_target(target_key).content_sets.each do |content_set|
           content_set.content.each do | content_item |
             pull_content(target_key,content_item)
+            
           end
         end 
       end
